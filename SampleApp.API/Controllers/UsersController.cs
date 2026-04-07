@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Bogus;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SampleApp.API.DTOs;
 using SampleApp.API.Entities;
@@ -13,14 +14,13 @@ namespace SampleApp.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController(IUserRepository _repo) : ControllerBase
+public class UsersController(IUserRepository _repo, ITokenService _tokenService) : ControllerBase
 {
     [HttpPost]
     public ActionResult CreateUser(LoginDto loginDto)
     {
         var validator = new UserValidator();
         var result = validator.Validate(loginDto);
-
         if (!result.IsValid)
             return BadRequest(result.Errors.First().ErrorMessage);
 
@@ -31,24 +31,47 @@ public class UsersController(IUserRepository _repo) : ControllerBase
             Login = loginDto.Login,
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password)),
             PasswordSalt = hmac.Key,
+            Token = _tokenService.CreateToken(loginDto.Login),
         };
 
         return Created("", _repo.CreateUser(user).ToDto());
     }
 
+    [HttpPost("Login")]
+    public ActionResult<UserDto> Login(LoginDto loginDto)
+    {
+        var user = _repo.FindUserByLogin(loginDto.Login);
+        return CheckPasswordHash(loginDto, user);
+    }
+
+    private ActionResult<UserDto> CheckPasswordHash(LoginDto loginDto, User user)
+    {
+        using var hmac = new HMACSHA256(user.PasswordSalt);
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
+
+        for (int i = 0; i < computedHash.Length; i++)
+        {
+            if (computedHash[i] != user.PasswordHash[i])
+                return Unauthorized("Неправильный пароль");
+        }
+
+        user.Token = _tokenService.CreateToken(user.Login);
+        _repo.EditUser(user, user.Id);
+        return Ok(user.ToDto());
+    }
+
+    [Authorize]
     [HttpGet]
-    [SwaggerOperation(Summary = "Получение списка пользователей", Description = "Возвращает всех пользователей", OperationId = "GetUsers")]
+    [SwaggerOperation(Summary = "Получение списка пользователей", OperationId = "GetUsers")]
     [SwaggerResponse(200, "Список пользователей получен успешно", typeof(List<UserDto>))]
-    [SwaggerResponse(404, "Пользователи не найдены")]
     public ActionResult GetUsers()
     {
         return Ok(_repo.GetUsers().Select(u => u.ToDto()));
     }
 
+    [Authorize]
     [HttpPut]
     [SwaggerOperation(Summary = "Обновление пользователя", OperationId = "UpdateUser")]
-    [SwaggerResponse(200, "Пользователь обновлён", typeof(UserDto))]
-    [SwaggerResponse(404, "Пользователь не найден")]
     public ActionResult UpdateUser(EditUserDto editUserDto)
     {
         var current = _repo.FindUserById(editUserDto.Id);
@@ -58,12 +81,14 @@ public class UsersController(IUserRepository _repo) : ControllerBase
         return Ok(_repo.EditUser(current, current.Id).ToDto());
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public ActionResult GetUserById(int id)
     {
         return Ok(_repo.FindUserById(id).ToDto());
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public ActionResult DeleteUser(int id)
     {
@@ -94,6 +119,7 @@ public class UsersController(IUserRepository _repo) : ControllerBase
                 Login = dto.Login,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password)),
                 PasswordSalt = hmac.Key,
+                Token = _tokenService.CreateToken(dto.Login),
             });
         }
 

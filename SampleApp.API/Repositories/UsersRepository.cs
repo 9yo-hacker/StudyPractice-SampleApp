@@ -39,6 +39,12 @@ public class UsersRepository(SampleAppContext db, ILogger<UsersRepository> logge
         return user ?? throw new NotFoundException($"Нет пользователя с id = {id}");
     }
 
+    public User FindUserByLogin(string login)
+    {
+        var user = db.Users.FirstOrDefault(u => u.Login == login);
+        return user ?? throw new NotFoundException($"Нет пользователя с login = {login}");
+    }
+
     public List<User> GetUsers()
     {
         return db.Users.ToList();

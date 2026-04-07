@@ -12,6 +12,7 @@ public static class UserMapper
             Id = user.Id,
             Login = user.Login,
             Name = user.Name,
+            Token = user.Token,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt,
         };
@@ -24,6 +25,7 @@ public static class UserMapper
             Id = userDto.Id,
             Login = userDto.Login,
             Name = userDto.Name,
+            Token = userDto.Token,
             CreatedAt = userDto.CreatedAt,
             UpdatedAt = userDto.UpdatedAt,
             PasswordHash = null!,
