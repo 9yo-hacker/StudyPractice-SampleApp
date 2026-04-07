@@ -8,7 +8,7 @@ using SampleApp.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllerServices();
 
 builder.Services.AddCors(options =>
 {
@@ -21,8 +21,10 @@ builder.Services.AddDbContext<SampleAppContext>(o =>
 
 builder.Services.AddFluentValidationServices();
 builder.Services.AddJwtServices(builder.Configuration);
+
 builder.Services.AddScoped<IUserRepository, UsersRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IMicropostRepository, MicropostRepository>();
 
 var app = builder.Build();
 

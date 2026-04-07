@@ -7,4 +7,8 @@ public class User : Base
     public required byte[] PasswordHash { get; set; }
     public required byte[] PasswordSalt { get; set; }
     public string Token { get; set; } = string.Empty;
+
+    public int RoleId { get; set; } = (int)RoleType.User;
+    public Role? Role { get; set; }
+    public IEnumerable<Micropost>? Microposts { get; set; }
 }
