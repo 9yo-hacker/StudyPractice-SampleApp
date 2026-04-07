@@ -1,34 +1,25 @@
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import { Link, useLocation } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { Home, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Header() {
-  const { pathname } = useLocation();
+export const Header = () => {
+  const navigate = useNavigate();
 
   return (
     <AppBar position="static">
       <Toolbar>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button
-            component={Link}
-            to="/"
-            color="inherit"
-            variant={pathname === '/' ? 'outlined' : 'text'}
-          >
-            Главная
-          </Button>
-          <Button
-            component={Link}
-            to="/users"
-            color="inherit"
-            variant={pathname === '/users' ? 'outlined' : 'text'}
-          >
-            Пользователи
-          </Button>
-        </Box>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          SampleApp
+        </Typography>
+        <Button color="inherit" onClick={() => navigate('/')} startIcon={<Home size={20} />}>
+          Главная
+        </Button>
+        <Button color="inherit" onClick={() => navigate('/users')} startIcon={<Users size={20} />}>
+          Пользователи
+        </Button>
       </Toolbar>
     </AppBar>
   );
-}
+};
+
+export default Header;

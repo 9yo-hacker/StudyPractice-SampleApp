@@ -1,21 +1,29 @@
-import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
+import { Container, Typography, Box, Paper, Avatar } from '@mui/material';
+import { Home, Users, Sparkles } from 'lucide-react';
 
-export default function HomePage() {
-  return (
-    <Container maxWidth="lg" sx={{ mt: 8, display: 'flex', justifyContent: 'center' }}>
-      <Paper elevation={3} sx={{ p: 6, textAlign: 'center', maxWidth: 800, width: '100%' }}>
-        <Typography variant="h2" component="h1" gutterBottom>
-          Добро пожаловать
-        </Typography>
-        <Typography variant="h5" color="text.secondary">
-          SampleApp на React
-        </Typography>
-        <Typography variant="body1" sx={{ mt: 3 }}>
-          Демонстрационное приложение, показывающее пользователей из API.
-        </Typography>
-      </Paper>
-    </Container>
-  );
-}
+export const HomePage = () => (
+  <Container maxWidth="md" sx={{ py: 4 }}>
+    <Paper sx={{ p: 4, textAlign: 'center' }}>
+      <Box display="flex" justifyContent="center" gap={2} mb={3}>
+        <Avatar sx={{ bgcolor: 'primary.main', width: 60, height: 60 }}>
+          <Home size={30} />
+        </Avatar>
+        <Avatar sx={{ bgcolor: 'secondary.main', width: 60, height: 60 }}>
+          <Users size={30} />
+        </Avatar>
+        <Avatar sx={{ bgcolor: 'success.main', width: 60, height: 60 }}>
+          <Sparkles size={30} />
+        </Avatar>
+      </Box>
+      <Typography variant="h2" gutterBottom>
+        Добро пожаловать!
+      </Typography>
+      <Typography variant="h5" color="text.secondary" paragraph>
+        SampleApp на React
+      </Typography>
+      <Typography variant="body1">Демонстрационное приложение для работы с пользователями</Typography>
+    </Paper>
+  </Container>
+);
+
+export default HomePage;
