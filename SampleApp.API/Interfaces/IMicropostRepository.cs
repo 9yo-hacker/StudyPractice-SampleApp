@@ -11,4 +11,5 @@ public interface IMicropostRepository
     Micropost EditMicropost(Micropost micropost, int id);
     Micropost DeleteMicropost(int id);
     Micropost FindMicropostById(int id);
+    List<Micropost> GetMicropostsByUser(int id);
 }

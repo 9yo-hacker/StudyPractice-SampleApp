@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using SampleApp.API.Data;
 using SampleApp.API.Entities;
 using SampleApp.API.Exceptions;
@@ -42,6 +43,11 @@ public class MicropostRepository(SampleAppContext db) : IMicropostRepository
     public List<Micropost> GetMicroposts()
     {
         return db.Microposts.ToList();
+    }
+
+    public List<Micropost> GetMicropostsByUser(int id)
+    {
+        return db.Microposts.Include(m => m.User).Where(m => m.UserId == id).ToList();
     }
 
     public List<Micropost> GetMicroposts(Option opt)

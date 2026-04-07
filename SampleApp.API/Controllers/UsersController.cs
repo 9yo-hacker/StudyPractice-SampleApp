@@ -15,7 +15,7 @@ namespace SampleApp.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController(IUserRepository _repo, ITokenService _tokenService, IRelationRepository _relationRepo) : ControllerBase
+public class UsersController(IUserRepository _repo, ITokenService _tokenService, IRelationRepository _relationRepo, IMicropostRepository _postRepo) : ControllerBase
 {
     [HttpPost]
     public ActionResult CreateUser(LoginDto loginDto)
@@ -143,6 +143,30 @@ public class UsersController(IUserRepository _repo, ITokenService _tokenService,
     {
         var relation = _relationRepo.FindRelation(id, userId);
         return Ok(_relationRepo.DeleteRelation(relation));
+    }
+
+    [Authorize]
+    [HttpGet("{userId}/microposts")]
+    [SwaggerOperation(Summary = "Найти все сообщения пользователя по id", Description = "Возвращает список сообщений пользователя", OperationId = "GetMicropostByUser")]
+    public ActionResult<List<MicropostDto>> GetMicropostByUser(int userId)
+    {
+        return _postRepo.GetMicropostsByUser(userId).Select(m => m.ToDto()).ToList();
+    }
+
+    [Authorize]
+    [HttpGet("{id}/feedMessages")]
+    [SwaggerOperation(Summary = "Лента сообщений пользователя", Description = "Возвращает сообщения подписок + свои", OperationId = "GetFeedMessages")]
+    public ActionResult<List<MicropostDto>> GetFeedMessages(int id)
+    {
+        var followedUsers = _repo.GetFolloweds(id).Select(u => u.Id);
+        var microposts = new List<Entities.Micropost>();
+
+        foreach (var followedId in followedUsers)
+            microposts.AddRange(_postRepo.GetMicropostsByUser(followedId));
+
+        microposts.AddRange(_postRepo.GetMicropostsByUser(id));
+
+        return microposts.OrderByDescending(m => m.CreatedAt).Select(m => m.ToDto()).ToList();
     }
 
     [HttpPost("seed")]
