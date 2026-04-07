@@ -61,4 +61,20 @@ public class UsersRepository(SampleAppContext db, ILogger<UsersRepository> logge
             .Take(opt.PageSize)
             .ToList();
     }
+
+    public List<User> GetFollowers(int id)
+    {
+        return db.Relations
+            .Where(r => r.FollowedId == id)
+            .Select(r => r.Follower!)
+            .ToList();
+    }
+
+    public List<User> GetFolloweds(int id)
+    {
+        return db.Relations
+            .Where(r => r.FollowerId == id)
+            .Select(r => r.Followed!)
+            .ToList();
+    }
 }

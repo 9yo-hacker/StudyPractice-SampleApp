@@ -25,6 +25,7 @@ builder.Services.AddJwtServices(builder.Configuration);
 builder.Services.AddScoped<IUserRepository, UsersRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IMicropostRepository, MicropostRepository>();
+builder.Services.AddScoped<IRelationRepository, RelationRepository>();
 
 var app = builder.Build();
 

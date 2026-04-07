@@ -15,7 +15,7 @@ namespace SampleApp.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController(IUserRepository _repo, ITokenService _tokenService) : ControllerBase
+public class UsersController(IUserRepository _repo, ITokenService _tokenService, IRelationRepository _relationRepo) : ControllerBase
 {
     [HttpPost]
     public ActionResult CreateUser(LoginDto loginDto)
@@ -109,6 +109,40 @@ public class UsersController(IUserRepository _repo, ITokenService _tokenService)
     public ActionResult DeleteUser(int id)
     {
         return Ok(_repo.DeleteUser(id));
+    }
+
+    [Authorize]
+    [HttpGet("{id}/followers")]
+    [SwaggerOperation(Summary = "Получить подписчиков пользователя")]
+    public ActionResult GetFollowers(int id)
+    {
+        return Ok(_repo.GetFollowers(id).Select(u => u.ToDto()));
+    }
+
+    [Authorize]
+    [HttpGet("{id}/followeds")]
+    [SwaggerOperation(Summary = "Получить подписки пользователя")]
+    public ActionResult GetFolloweds(int id)
+    {
+        return Ok(_repo.GetFolloweds(id).Select(u => u.ToDto()));
+    }
+
+    [Authorize]
+    [HttpPost("{id}/follow/{userId}")]
+    [SwaggerOperation(Summary = "Подписаться на пользователя")]
+    public ActionResult Follow(int id, int userId)
+    {
+        var relation = new Relation(id, userId);
+        return Ok(_relationRepo.CreateRelation(relation));
+    }
+
+    [Authorize]
+    [HttpDelete("{id}/unfollow/{userId}")]
+    [SwaggerOperation(Summary = "Отписаться от пользователя")]
+    public ActionResult Unfollow(int id, int userId)
+    {
+        var relation = _relationRepo.FindRelation(id, userId);
+        return Ok(_relationRepo.DeleteRelation(relation));
     }
 
     [HttpPost("seed")]
