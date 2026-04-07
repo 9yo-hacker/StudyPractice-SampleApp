@@ -11,4 +11,6 @@ public class User : Base
     public int RoleId { get; set; } = (int)RoleType.User;
     public Role? Role { get; set; }
     public IEnumerable<Micropost>? Microposts { get; set; }
+    public IEnumerable<Relation>? FollowedRelations { get; set; }
+    public IEnumerable<Relation>? FollowerRelations { get; set; }
 }

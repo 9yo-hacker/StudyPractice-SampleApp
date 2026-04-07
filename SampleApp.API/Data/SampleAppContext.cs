@@ -8,6 +8,7 @@ public class SampleAppContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<Micropost> Microposts { get; set; }
+    public DbSet<Relation> Relations { get; set; }
 
     public SampleAppContext(DbContextOptions<SampleAppContext> opt) : base(opt) { }
 
@@ -29,6 +30,28 @@ public class SampleAppContext : DbContext
                   .WithMany()
                   .HasForeignKey(e => e.RoleId)
                   .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Relation>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Followed)
+                  .WithMany(u => u.FollowedRelations)
+                  .HasForeignKey(e => e.FollowedId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Follower)
+                  .WithMany(u => u.FollowerRelations)
+                  .HasForeignKey(e => e.FollowerId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(e => new { e.FollowerId, e.FollowedId }).IsUnique();
+            entity.HasIndex(e => e.FollowerId);
+            entity.HasIndex(e => e.FollowedId);
+
+            entity.ToTable(t =>
+                t.HasCheckConstraint("CK_Relation_SelfFollow", "\"FollowedId\" != \"FollowerId\""));
         });
 
         modelBuilder.Entity<Micropost>(entity =>
