@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using SampleApp.API.Data;
 using SampleApp.API.Interfaces;
 using SampleApp.API.Repositories;
 
@@ -16,7 +18,10 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-builder.Services.AddSingleton<IUserRepository, UsersMemoryRepository>();
+builder.Services.AddDbContext<SampleAppContext>(o =>
+    o.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL")));
+
+builder.Services.AddScoped<IUserRepository, UsersRepository>();
 
 var app = builder.Build();
 
