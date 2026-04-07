@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SampleApp.API.Data;
+using SampleApp.API.Extensions;
 using SampleApp.API.Interfaces;
+using SampleApp.API.Middlewares;
 using SampleApp.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,10 +23,12 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<SampleAppContext>(o =>
     o.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL")));
 
+builder.Services.AddFluentValidationServices();
 builder.Services.AddScoped<IUserRepository, UsersRepository>();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors();

@@ -1,15 +1,17 @@
 using SampleApp.API.Data;
 using SampleApp.API.Entities;
+using SampleApp.API.Exceptions;
 using SampleApp.API.Interfaces;
 
 namespace SampleApp.API.Repositories;
 
-public class UsersRepository(SampleAppContext db) : IUserRepository
+public class UsersRepository(SampleAppContext db, ILogger<UsersRepository> logger) : IUserRepository
 {
     public User CreateUser(User user)
     {
         db.Users.Add(user);
         db.SaveChanges();
+        logger.LogInformation($"Пользователь {user.Login} создан");
         return user;
     }
 
@@ -18,6 +20,7 @@ public class UsersRepository(SampleAppContext db) : IUserRepository
         var user = FindUserById(id);
         db.Users.Remove(user);
         db.SaveChanges();
+        logger.LogInformation($"Пользователь с id={id} удалён");
         return true;
     }
 
@@ -26,13 +29,14 @@ public class UsersRepository(SampleAppContext db) : IUserRepository
         FindUserById(id);
         db.Users.Update(user);
         db.SaveChanges();
+        logger.LogInformation($"Пользователь с id={id} обновлён");
         return user;
     }
 
     public User FindUserById(int id)
     {
         var user = db.Users.Find(id);
-        return user ?? throw new Exception($"Нет пользователя с id = {id}");
+        return user ?? throw new NotFoundException($"Нет пользователя с id = {id}");
     }
 
     public List<User> GetUsers()
