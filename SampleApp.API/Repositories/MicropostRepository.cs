@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using SampleApp.API.Data;
 using SampleApp.API.Entities;
 using SampleApp.API.Exceptions;
 using SampleApp.API.Interfaces;
+using SampleApp.API.Models;
 
 namespace SampleApp.API.Repositories;
 
@@ -40,5 +42,15 @@ public class MicropostRepository(SampleAppContext db) : IMicropostRepository
     public List<Micropost> GetMicroposts()
     {
         return db.Microposts.ToList();
+    }
+
+    public List<Micropost> GetMicroposts(Option opt)
+    {
+        return db.Microposts
+            .AsNoTracking()
+            .OrderBy(m => m.CreatedAt)
+            .Skip((opt.PageNumber - 1) * opt.PageSize)
+            .Take(opt.PageSize)
+            .ToList();
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SampleApp.API.DTOs;
 using SampleApp.API.Entities;
 using SampleApp.API.Interfaces;
+using SampleApp.API.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace SampleApp.API.Controllers;
@@ -16,6 +17,21 @@ public class MicropostsController(IMicropostRepository repo) : ControllerBase
     [SwaggerOperation(Summary = "Получение списка сообщений", Description = "Возвращает все сообщения", OperationId = "GetMicroposts")]
     [SwaggerResponse(200, "Список сообщений получен успешно", typeof(List<Micropost>))]
     public ActionResult<List<Micropost>> GetMicroposts() => Ok(repo.GetMicroposts());
+
+    [Authorize]
+    [HttpGet("option")]
+    [SwaggerOperation(Summary = "Получение сообщений с пагинацией", OperationId = "GetMicropostsByParams")]
+    [SwaggerResponse(200, "Список сообщений получен успешно", typeof(ApiResult<Micropost>))]
+    public ActionResult<ApiResult<Micropost>> GetMicropostsByParams([FromQuery] Option opt)
+    {
+        return Ok(new ApiResult<Micropost>
+        {
+            PageNumber = opt.PageNumber,
+            PageSize = opt.PageSize,
+            Count = repo.GetMicroposts().Count,
+            Data = repo.GetMicroposts(opt),
+        });
+    }
 
     [Authorize]
     [HttpPost]

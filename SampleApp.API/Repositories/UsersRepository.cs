@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using SampleApp.API.Data;
 using SampleApp.API.Entities;
 using SampleApp.API.Exceptions;
 using SampleApp.API.Interfaces;
+using SampleApp.API.Models;
 
 namespace SampleApp.API.Repositories;
 
@@ -48,5 +50,15 @@ public class UsersRepository(SampleAppContext db, ILogger<UsersRepository> logge
     public List<User> GetUsers()
     {
         return db.Users.ToList();
+    }
+
+    public List<User> GetUsers(Option opt)
+    {
+        return db.Users
+            .AsNoTracking()
+            .OrderBy(u => u.Login)
+            .Skip((opt.PageNumber - 1) * opt.PageSize)
+            .Take(opt.PageSize)
+            .ToList();
     }
 }

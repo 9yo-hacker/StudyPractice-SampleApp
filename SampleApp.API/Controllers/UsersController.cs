@@ -7,6 +7,7 @@ using SampleApp.API.DTOs;
 using SampleApp.API.Entities;
 using SampleApp.API.Interfaces;
 using SampleApp.API.Mappers;
+using SampleApp.API.Models;
 using SampleApp.API.Validations;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -67,6 +68,21 @@ public class UsersController(IUserRepository _repo, ITokenService _tokenService)
     public ActionResult GetUsers()
     {
         return Ok(_repo.GetUsers().Select(u => u.ToDto()));
+    }
+
+    [Authorize]
+    [HttpGet("option")]
+    [SwaggerOperation(Summary = "Получение списка пользователей c параметрами", Description = "Возвращает ApiResult<UserDto> с пагинацией", OperationId = "GetUsersByParams")]
+    [SwaggerResponse(200, "Список пользователей получен успешно", typeof(ApiResult<UserDto>))]
+    public ActionResult<ApiResult<UserDto>> GetUsersByParams([FromQuery] Option opt)
+    {
+        return Ok(new ApiResult<UserDto>
+        {
+            PageNumber = opt.PageNumber,
+            PageSize = opt.PageSize,
+            Count = _repo.GetUsers().Count,
+            Data = _repo.GetUsers(opt).Select(u => u.ToDto()).ToList(),
+        });
     }
 
     [Authorize]
