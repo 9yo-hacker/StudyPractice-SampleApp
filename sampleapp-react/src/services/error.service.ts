@@ -44,9 +44,17 @@ class ErrorService {
         case 404:
           errorResponse.message = 'Ресурс не найден';
           break;
-        case 500:
-          errorResponse.message = data.message || 'Внутренняя ошибка сервера';
+        case 500: {
+          const raw: string = data.message || '';
+          const lower = raw.toLowerCase();
+          if (lower.includes('duplicate') || lower.includes('unique') ||
+              lower.includes('23505') || lower.includes('already exists')) {
+            errorResponse.message = 'Пользователь с таким логином уже существует';
+          } else {
+            errorResponse.message = raw || 'Внутренняя ошибка сервера';
+          }
           break;
+        }
         default:
           errorResponse.message = data.message || `Ошибка ${status}`;
           break;

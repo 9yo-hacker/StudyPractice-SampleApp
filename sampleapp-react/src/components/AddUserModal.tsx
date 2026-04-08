@@ -5,6 +5,13 @@ import {
 } from '@mui/material';
 import { UserPlus, Eye, EyeOff, X } from 'lucide-react';
 
+const isDuplicateLoginError = (msg: string) => {
+  const lower = msg.toLowerCase();
+  return lower.includes('duplicate') || lower.includes('unique') ||
+         lower.includes('23505') || lower.includes('already exists') ||
+         lower.includes('уже существует');
+};
+
 type AddUserModalProps = {
   open: boolean;
   onClose: () => void;
@@ -43,8 +50,12 @@ export const AddUserModal = ({ open, onClose, onSave }: AddUserModalProps) => {
       await onSave(formData);
       handleClose();
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setServerError(msg || 'Ошибка при создании пользователя');
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? '';
+      if (isDuplicateLoginError(msg)) {
+        setServerError(`Пользователь с логином "${formData.login}" уже существует`);
+      } else {
+        setServerError(msg || 'Ошибка при создании пользователя');
+      }
     } finally {
       setLoading(false);
     }
