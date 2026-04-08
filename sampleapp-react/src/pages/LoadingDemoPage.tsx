@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Container, Typography, Box, Paper, Button, Stack, Alert, LinearProgress } from '@mui/material';
 import { Loader2, Zap, Layers, Info } from 'lucide-react';
 import { useLoading } from '../contexts/LoadingContext';
-import { getUsers, getUserById, createUser } from '../api/users';
+import { getUsers } from '../api/users';
 import { ButtonLoader } from '../components/ButtonLoader';
 
 export const LoadingDemoPage = () => {
@@ -29,8 +29,8 @@ export const LoadingDemoPage = () => {
     try {
       await withLoading(Promise.all([
         getUsers(),
-        getUserById(1),
-        createUser({ login: 'test', password: '123' }),
+        getUsers(),
+        getUsers(),
       ]));
       setResult('✅ Все запросы выполнены');
     } catch {

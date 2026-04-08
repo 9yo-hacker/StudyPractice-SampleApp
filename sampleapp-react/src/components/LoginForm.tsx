@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Box, Button, Alert } from '@mui/material';
-import { ButtonLoader } from './ButtonLoader';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { FormInput } from './FormInput';
+import { ButtonLoader } from './ButtonLoader';
 
 type FormData = {
   login: string;
@@ -16,8 +16,9 @@ export const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { register, handleSubmit, watch, formState: { errors, touchedFields, isValid } } = useForm<FormData>({
+  const { control, handleSubmit, formState: { errors, touchedFields, isValid } } = useForm<FormData>({
     mode: 'onChange',
+    defaultValues: { login: '', password: '' },
   });
 
   const onSubmit = async (data: FormData) => {
@@ -39,32 +40,40 @@ export const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {error && <Alert severity="error">{error}</Alert>}
 
-        <FormInput
-          label="Логин"
+        <Controller
           name="login"
-          value={watch('login') ?? ''}
-          onChange={register('login', { required: 'Логин обязателен' }).onChange}
-          onBlur={register('login').onBlur}
-          error={errors.login?.message}
-          touched={touchedFields.login}
-          required
-          disabled={loading}
+          control={control}
+          rules={{ required: 'Логин обязателен', validate: (v) => /^[A-Z]/.test(v) || 'Логин должен начинаться с заглавной буквы' }}
+          render={({ field }) => (
+            <FormInput
+              {...field}
+              label="Логин"
+              error={errors.login?.message}
+              touched={touchedFields.login}
+              required
+              disabled={loading}
+            />
+          )}
         />
 
-        <FormInput
-          label="Пароль"
+        <Controller
           name="password"
-          type="password"
-          value={watch('password') ?? ''}
-          onChange={register('password', {
+          control={control}
+          rules={{
             required: 'Пароль обязателен',
             minLength: { value: 3, message: 'Минимум 3 символа' },
-          }).onChange}
-          onBlur={register('password').onBlur}
-          error={errors.password?.message}
-          touched={touchedFields.password}
-          required
-          disabled={loading}
+          }}
+          render={({ field }) => (
+            <FormInput
+              {...field}
+              label="Пароль"
+              type="password"
+              error={errors.password?.message}
+              touched={touchedFields.password}
+              required
+              disabled={loading}
+            />
+          )}
         />
 
         <Button

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -6,8 +6,8 @@ type FormInputProps = {
   label: string;
   name: string;
   type?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   error?: string;
   touched?: boolean;
@@ -16,7 +16,7 @@ type FormInputProps = {
   endAdornment?: React.ReactNode;
 };
 
-export const FormInput = ({
+export const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
   label,
   name,
   type = 'text',
@@ -28,7 +28,7 @@ export const FormInput = ({
   required,
   disabled,
   endAdornment,
-}: FormInputProps) => {
+}, ref) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
   const fieldType = isPassword ? (showPassword ? 'text' : 'password') : type;
@@ -49,9 +49,10 @@ export const FormInput = ({
       label={label}
       name={name}
       type={fieldType}
-      value={value}
+      value={value ?? ''}
       onChange={onChange}
       onBlur={onBlur}
+      inputRef={ref}
       error={touched && !!error}
       helperText={touched ? error : undefined}
       required={required}
@@ -59,4 +60,4 @@ export const FormInput = ({
       slotProps={adornment ? { input: { endAdornment: adornment } } : undefined}
     />
   );
-};
+});

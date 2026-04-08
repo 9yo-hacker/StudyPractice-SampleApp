@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Box, Button, Alert, CircularProgress } from '@mui/material';
 import { UserPlus } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -23,7 +23,7 @@ export const RegisterForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [showDebug, setShowDebug] = useState(import.meta.env.DEV);
   const [checkingLogin, setCheckingLogin] = useState(false);
 
-  const { register, handleSubmit, watch, formState, setError, clearErrors } = useForm<FormData>({
+  const { control, handleSubmit, watch, formState, setError, clearErrors } = useForm<FormData>({
     mode: 'onChange',
     defaultValues: { login: '', password: '', name: '' },
   });
@@ -83,41 +83,53 @@ export const RegisterForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {serverError && <Alert severity="error">{serverError}</Alert>}
 
-        <FormInput
-          label="Имя"
+        <Controller
           name="name"
-          value={watch('name') ?? ''}
-          onChange={register('name', { validate: validateName }).onChange}
-          onBlur={register('name').onBlur}
-          error={errors.name?.message}
-          touched={touchedFields.name}
-          disabled={loading}
+          control={control}
+          rules={{ validate: validateName }}
+          render={({ field }) => (
+            <FormInput
+              {...field}
+              label="Имя"
+              error={errors.name?.message}
+              touched={touchedFields.name}
+              disabled={loading}
+            />
+          )}
         />
 
-        <FormInput
-          label="Логин"
+        <Controller
           name="login"
-          value={loginValue ?? ''}
-          onChange={register('login', { validate: validateLogin }).onChange}
-          onBlur={register('login').onBlur}
-          error={errors.login?.message}
-          touched={touchedFields.login}
-          required
-          disabled={loading}
-          endAdornment={checkingLogin ? <CircularProgress size={20} /> : undefined}
+          control={control}
+          rules={{ validate: validateLogin }}
+          render={({ field }) => (
+            <FormInput
+              {...field}
+              label="Логин"
+              error={errors.login?.message}
+              touched={touchedFields.login}
+              required
+              disabled={loading}
+              endAdornment={checkingLogin ? <CircularProgress size={20} /> : undefined}
+            />
+          )}
         />
 
-        <FormInput
-          label="Пароль"
+        <Controller
           name="password"
-          type="password"
-          value={passwordValue ?? ''}
-          onChange={register('password', { validate: validatePassword }).onChange}
-          onBlur={register('password').onBlur}
-          error={errors.password?.message}
-          touched={touchedFields.password}
-          required
-          disabled={loading}
+          control={control}
+          rules={{ validate: validatePassword }}
+          render={({ field }) => (
+            <FormInput
+              {...field}
+              label="Пароль"
+              type="password"
+              error={errors.password?.message}
+              touched={touchedFields.password}
+              required
+              disabled={loading}
+            />
+          )}
         />
 
         <PasswordStrength password={passwordValue} />
