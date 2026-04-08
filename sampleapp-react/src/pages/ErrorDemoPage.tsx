@@ -28,10 +28,11 @@ export const ErrorDemoPage = () => {
     finally { setLoading(null); }
   };
 
-  const trigger401 = async () => {
-    setLoading('401');
-    try { await apiClient.get('/Users/admin'); } catch { /* handled */ }
-    finally { setLoading(null); }
+  const trigger401 = () => {
+    errorService.handleError({
+      response: { status: 401, data: { message: 'Не авторизован' }, config: { url: '/Users/admin' } },
+      config: { url: '/Users/admin' },
+    });
   };
 
   const triggerValidation = async () => {
@@ -73,7 +74,7 @@ export const ErrorDemoPage = () => {
       icon: <Shield size={24} />,
       color: '#f44336',
       action: trigger401,
-      loading: loading === '401',
+      loading: false,
     },
     {
       title: 'Ошибка валидации',
