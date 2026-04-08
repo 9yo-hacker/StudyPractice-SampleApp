@@ -1,12 +1,18 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
+import { LoadingProvider } from './contexts/LoadingContext';
+import { GlobalLoader } from './components/GlobalLoader';
 import { Header } from './components/Header';
 import { HomePage } from './pages/HomePage';
 import { UsersPage } from './pages/UsersPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { LoadingDemoPage } from './pages/LoadingDemoPage';
+import { setLoadingCallback } from './api/client';
+import { useLoading } from './contexts/LoadingContext';
 
 const theme = createTheme({
   palette: {
@@ -14,21 +20,36 @@ const theme = createTheme({
   },
 });
 
+const LoadingBridge = () => {
+  const { setLoading } = useLoading();
+
+  useEffect(() => {
+    setLoadingCallback(setLoading);
+  }, [setLoading]);
+
+  return null;
+};
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthProvider>
-        <BrowserRouter>
-          <Header />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+      <LoadingProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <LoadingBridge />
+            <GlobalLoader message="Загрузка данных..." />
+            <Header />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/users" element={<UsersPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/loading-demo" element={<LoadingDemoPage />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </LoadingProvider>
     </ThemeProvider>
   );
 }

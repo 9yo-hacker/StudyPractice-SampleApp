@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Alert } from '@mui/material';
+import { ButtonLoader } from './ButtonLoader';
 import { LogIn } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { FormInput } from './FormInput';
@@ -69,8 +70,9 @@ export const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
         <Button
           type="submit"
           variant="contained"
-          startIcon={<LogIn size={20} />}
+          startIcon={loading ? <ButtonLoader /> : <LogIn size={20} />}
           disabled={!isValid || loading}
+          fullWidth
         >
           {loading ? 'Вход...' : 'Войти'}
         </Button>

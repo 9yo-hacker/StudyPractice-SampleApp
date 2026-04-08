@@ -1,29 +1,34 @@
-import axios from 'axios';
+import { apiClient } from './client';
 import { User } from '../types';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5071/api';
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const getUsers = async (): Promise<User[]> => {
-  const response = await axios.get<User[]>(`${API_URL}/Users`);
+  await delay(1000);
+  const response = await apiClient.get<User[]>('/Users');
   return response.data;
 };
 
 export const getUserById = async (id: number): Promise<User> => {
-  const response = await axios.get<User>(`${API_URL}/Users/${id}`);
+  await delay(800);
+  const response = await apiClient.get<User>(`/Users/${id}`);
   return response.data;
 };
 
-export const createUser = async (user: User): Promise<User> => {
-  const response = await axios.post<User>(`${API_URL}/Users`, user);
+export const createUser = async (user: Partial<User>) => {
+  await delay(1200);
+  const response = await apiClient.post('/Users', user);
   return response.data;
 };
 
-export const updateUser = async (user: User): Promise<User> => {
-  const response = await axios.put<User>(`${API_URL}/Users`, user);
+export const updateUser = async (id: number, user: Partial<User>) => {
+  await delay(1200);
+  const response = await apiClient.put(`/Users/${id}`, user);
   return response.data;
 };
 
-export const deleteUser = async (id: number): Promise<boolean> => {
-  const response = await axios.delete<boolean>(`${API_URL}/Users/${id}`);
+export const deleteUser = async (id: number) => {
+  await delay(1000);
+  const response = await apiClient.delete(`/Users/${id}`);
   return response.data;
 };
