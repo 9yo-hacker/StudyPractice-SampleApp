@@ -1,10 +1,12 @@
-import { Container, Paper, Typography, Box, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Container, Paper, Typography, Box, Button, Alert } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { RegisterForm } from '../components/RegisterForm';
 import { UserPlus } from 'lucide-react';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const success = (location.state as { success?: boolean })?.success;
 
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
@@ -13,7 +15,15 @@ export const RegisterPage = () => {
           <UserPlus size={48} color="#3f51b5" />
           <Typography variant="h4" sx={{ mt: 2 }}>Регистрация</Typography>
         </Box>
-        <RegisterForm onSuccess={() => navigate('/login')} />
+
+        {success && (
+          <Alert severity="success" sx={{ mb: 2 }}>
+            Регистрация успешна! Теперь вы можете войти.
+          </Alert>
+        )}
+
+        <RegisterForm onSuccess={() => navigate('/login', { state: { registered: true } })} />
+
         <Box textAlign="center" mt={2}>
           <Typography variant="body2">
             Уже есть аккаунт?{' '}
