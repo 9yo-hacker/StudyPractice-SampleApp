@@ -16,6 +16,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { LoadingDemoPage } from './pages/LoadingDemoPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ServerErrorPage } from './pages/ServerErrorPage';
+import { UsersServerPage } from './pages/UsersServerPage';
 import { setLoadingCallback } from './api/client';
 import { useLoading } from './contexts/LoadingContext';
 
@@ -63,6 +64,12 @@ function App() {
               <Route path="/profile/:id/edit" element={
                 <AuthGuard>
                   <EditProfilePage />
+                </AuthGuard>
+              } />
+
+              <Route path="/users-server" element={
+                <AuthGuard>
+                  <UsersServerPage />
                 </AuthGuard>
               } />
 

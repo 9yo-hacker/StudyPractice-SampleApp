@@ -1,5 +1,5 @@
 import { Container, Typography, Box, Paper, Avatar, Button } from '@mui/material';
-import { Home, Users, Sparkles, LogIn, UserPlus, Loader2, Shield } from 'lucide-react';
+import { Home, Users, Sparkles, LogIn, UserPlus, Loader2, Shield, Server } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -48,14 +48,22 @@ export const HomePage = () => {
           </Box>
         )}
 
-        <Button
-          variant="outlined"
-          startIcon={<Loader2 size={20} />}
-          onClick={() => navigate('/loading-demo')}
-          sx={{ mt: 2 }}
-        >
-          Демо лоадера
-        </Button>
+        <Box display="flex" gap={2} justifyContent="center" flexWrap="wrap" mt={2}>
+          <Button
+            variant="outlined"
+            startIcon={<Loader2 size={20} />}
+            onClick={() => navigate('/loading-demo')}
+          >
+            Демо лоадера
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<Server size={20} />}
+            onClick={() => navigate('/users-server')}
+          >
+            Серверная пагинация
+          </Button>
+        </Box>
       </Paper>
     </Container>
   );

@@ -20,3 +20,16 @@ export type AuthResponse = {
   token: string;
   user: User;
 };
+
+export type PaginatedResponse<T> = {
+  data: T[];
+  count: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+};
+
+export type PaginationParams = {
+  pageNumber: number;
+  pageSize: number;
+};
