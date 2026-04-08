@@ -2,7 +2,7 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow, Paper, Typography, IconButton, Tooltip, Avatar, Box, Chip,
 } from '@mui/material';
-import { Eye, Edit2 } from 'lucide-react';
+import { Eye, Edit2, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../types';
 import { useAuth } from '../contexts/AuthContext';
@@ -13,9 +13,10 @@ type UsersTableProps = {
   users: User[];
   sortConfig: SortConfig<User>;
   onSort: (field: keyof User) => void;
+  onDelete?: (user: User) => void;
 };
 
-export const UsersTable = ({ users, sortConfig, onSort }: UsersTableProps) => {
+export const UsersTable = ({ users, sortConfig, onSort, onDelete }: UsersTableProps) => {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
@@ -85,8 +86,15 @@ export const UsersTable = ({ users, sortConfig, onSort }: UsersTableProps) => {
                 </Tooltip>
                 {currentUser?.id === user.id && (
                   <Tooltip title="Редактировать">
-                    <IconButton size="small" onClick={() => navigate(`/profile/${user.id}/edit`)}>
+                    <IconButton size="small" onClick={() => navigate(`/profile/${user.id}/edit`)} sx={{ mr: 1 }}>
                       <Edit2 size={18} />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                {onDelete && currentUser?.id !== user.id && (
+                  <Tooltip title="Удалить">
+                    <IconButton size="small" color="error" onClick={() => onDelete(user)}>
+                      <Trash2 size={18} />
                     </IconButton>
                   </Tooltip>
                 )}

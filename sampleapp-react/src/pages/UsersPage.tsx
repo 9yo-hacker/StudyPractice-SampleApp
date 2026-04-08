@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Container, Typography, Box, Button, Paper, Chip } from '@mui/material';
-import { RefreshCw, Users as UsersIcon, ChevronUp, ChevronDown } from 'lucide-react';
+import { RefreshCw, Users as UsersIcon, ChevronUp, ChevronDown, UserPlus } from 'lucide-react';
 import { useUsers } from '../hooks/useUsers';
 import { useLoading } from '../contexts/LoadingContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -8,6 +9,10 @@ import { SearchBar } from '../components/SearchBar';
 import { PaginationControls } from '../components/PaginationControls';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { ButtonLoader } from '../components/ButtonLoader';
+import { AddUserModal } from '../components/AddUserModal';
+import { ConfirmDialog } from '../components/guards/ConfirmDialog';
+import { createUser, deleteUser } from '../api/users';
+import { User } from '../types';
 
 export const UsersPage = () => {
   const {
@@ -21,6 +26,27 @@ export const UsersPage = () => {
 
   const { isLoading } = useLoading();
   const { token } = useAuth();
+
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const handleCreate = async (data: { login: string; password: string; name: string }) => {
+    await createUser(data);
+    await refetch();
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!userToDelete) return;
+    try {
+      setDeleteLoading(true);
+      await deleteUser(userToDelete.id);
+      setUserToDelete(null);
+      await refetch();
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -41,14 +67,23 @@ export const UsersPage = () => {
             )}
           </Box>
 
-          <Button
-            variant="contained"
-            onClick={() => refetch()}
-            disabled={isLoading}
-            startIcon={isLoading ? <ButtonLoader /> : <RefreshCw size={18} />}
-          >
-            {isLoading ? 'Загрузка...' : 'Обновить'}
-          </Button>
+          <Box display="flex" gap={1}>
+            <Button
+              variant="outlined"
+              onClick={() => refetch()}
+              disabled={isLoading}
+              startIcon={isLoading ? <ButtonLoader /> : <RefreshCw size={18} />}
+            >
+              {isLoading ? 'Загрузка...' : 'Обновить'}
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => setAddModalOpen(true)}
+              startIcon={<UserPlus size={18} />}
+            >
+              Создать
+            </Button>
+          </Box>
         </Box>
 
         <Box mb={3}>
@@ -78,7 +113,7 @@ export const UsersPage = () => {
 
         {error && <ErrorMessage message={error} onRetry={refetch} />}
 
-        <UsersTable users={users} sortConfig={sortConfig} onSort={requestSort} />
+        <UsersTable users={users} sortConfig={sortConfig} onSort={requestSort} onDelete={setUserToDelete} />
 
         {filteredCount > 0 && (
           <PaginationControls
@@ -99,6 +134,22 @@ export const UsersPage = () => {
           </Box>
         )}
       </Paper>
+
+      <AddUserModal
+        open={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
+        onSave={handleCreate}
+      />
+
+      <ConfirmDialog
+        open={!!userToDelete}
+        title="Удаление пользователя"
+        message={`Удалить пользователя "${userToDelete?.name || userToDelete?.login}"? Это действие необратимо.`}
+        confirmText={deleteLoading ? 'Удаление...' : 'Удалить'}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setUserToDelete(null)}
+        severity="error"
+      />
     </Container>
   );
 };
