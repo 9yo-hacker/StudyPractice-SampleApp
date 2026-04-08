@@ -8,6 +8,7 @@ type AuthContextType = {
   login: (login: string, password: string) => Promise<void>;
   register: (data: { login: string; password: string; name?: string }) => Promise<void>;
   logout: () => void;
+  token: string | null;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,9 +20,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.error('Ошибка парсинга пользователя', error);
+        localStorage.removeItem('user');
+      }
     }
     setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'user') {
+        if (e.newValue) {
+          setUser(JSON.parse(e.newValue));
+        } else {
+          setUser(null);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const login = async (login: string, password: string) => {
@@ -40,7 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, token: user?.token || null }}>
       {children}
     </AuthContext.Provider>
   );

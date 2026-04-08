@@ -1,13 +1,12 @@
-import axios from 'axios';
+import { apiClient } from './client';
+import { User } from '../types';
 
-const API_URL = import.meta.env.VITE_API_URL;
-
-export const login = async (login: string, password: string) => {
-  const response = await axios.post(`${API_URL}/users/login`, { login, password });
+export const login = async (login: string, password: string): Promise<User> => {
+  const response = await apiClient.post('/Users/Login', { login, password });
   return response.data;
 };
 
 export const register = async (data: { login: string; password: string; name?: string }) => {
-  const response = await axios.post(`${API_URL}/users`, data);
+  const response = await apiClient.post('/Users', data);
   return response.data;
 };

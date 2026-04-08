@@ -15,3 +15,8 @@ export type RegisterData = {
   password: string;
   name?: string;
 };
+
+export type AuthResponse = {
+  token: string;
+  user: User;
+};

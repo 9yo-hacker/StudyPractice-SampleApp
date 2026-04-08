@@ -15,12 +15,33 @@ const updateLoadingState = () => {
   }
 };
 
+const getToken = () => {
+  const userStr = localStorage.getItem('user');
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      return user.token;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+};
+
 export const apiClient = axios.create({
   baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
 apiClient.interceptors.request.use((config) => {
+  const token = getToken();
+  const isAuthRequest =
+    config.url?.includes('/Users/Login') || config.url?.includes('/Users/Register');
+
+  if (token && !isAuthRequest) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
   activeRequests++;
   updateLoadingState();
   return config;
@@ -35,6 +56,12 @@ apiClient.interceptors.response.use(
   (error) => {
     activeRequests--;
     updateLoadingState();
+
+    if (error.response?.status === 401) {
+      localStorage.removeItem('user');
+      window.dispatchEvent(new Event('storage'));
+    }
+
     return Promise.reject(error);
   }
 );

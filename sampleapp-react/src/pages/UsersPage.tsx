@@ -1,7 +1,8 @@
 import { Container, Typography, Box, Button, Paper, Chip } from '@mui/material';
-import { RefreshCw, Users as UsersIcon } from 'lucide-react';
+import { RefreshCw, Users as UsersIcon, Shield } from 'lucide-react';
 import { useUsers } from '../hooks/useUsers';
 import { useLoading } from '../contexts/LoadingContext';
+import { useAuth } from '../contexts/AuthContext';
 import { UsersTable } from '../components/UsersTable';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { ButtonLoader } from '../components/ButtonLoader';
@@ -9,6 +10,7 @@ import { ButtonLoader } from '../components/ButtonLoader';
 export const UsersPage = () => {
   const { users, error, refetch, totalCount } = useUsers();
   const { isLoading } = useLoading();
+  const { token } = useAuth();
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -19,8 +21,17 @@ export const UsersPage = () => {
             <Typography variant="h4">
               Пользователи {totalCount > 0 && `(${totalCount})`}
             </Typography>
+            {token && (
+              <Chip
+                icon={<Shield size={14} />}
+                label="JWT активен"
+                size="small"
+                color="success"
+                sx={{ ml: 2 }}
+              />
+            )}
             {isLoading && (
-              <Chip label="Загрузка..." size="small" color="primary" sx={{ ml: 2 }} />
+              <Chip label="Загрузка..." size="small" color="primary" sx={{ ml: 1 }} />
             )}
           </Box>
 
@@ -37,6 +48,14 @@ export const UsersPage = () => {
         {error && <ErrorMessage message={error} onRetry={refetch} />}
 
         <UsersTable users={users} />
+
+        {token && (
+          <Box mt={2} p={2} bgcolor="#f5f5f5" borderRadius={1}>
+            <Typography variant="caption" color="text.secondary">
+              JWT токен: {token.substring(0, 30)}...
+            </Typography>
+          </Box>
+        )}
       </Paper>
     </Container>
   );

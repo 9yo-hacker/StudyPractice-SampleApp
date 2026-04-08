@@ -5,9 +5,11 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { GlobalLoader } from './components/GlobalLoader';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { Header } from './components/Header';
 import { HomePage } from './pages/HomePage';
 import { UsersPage } from './pages/UsersPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { LoadingDemoPage } from './pages/LoadingDemoPage';
@@ -38,14 +40,24 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <LoadingBridge />
-            <GlobalLoader message="Загрузка данных..." />
+            <GlobalLoader message="Загрузка..." />
             <Header />
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/users" element={<UsersPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/loading-demo" element={<LoadingDemoPage />} />
+
+              <Route path="/users" element={
+                <ProtectedRoute>
+                  <UsersPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile/:id" element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              } />
             </Routes>
           </BrowserRouter>
         </AuthProvider>

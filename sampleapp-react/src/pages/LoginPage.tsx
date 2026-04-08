@@ -27,7 +27,10 @@ export const LoginPage = () => {
           </Alert>
         )}
 
-        <LoginForm onSuccess={() => navigate('/')} />
+        <LoginForm onSuccess={() => {
+          const from = (location.state as { from?: string })?.from || '/';
+          navigate(from, { replace: true });
+        }} />
 
         <Box textAlign="center" mt={2}>
           <Typography variant="body2">

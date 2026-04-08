@@ -1,10 +1,10 @@
 import { Container, Typography, Box, Paper, Avatar, Button } from '@mui/material';
-import { Home, Users, Sparkles, LogIn, UserPlus, Loader2 } from 'lucide-react';
+import { Home, Users, Sparkles, LogIn, UserPlus, Loader2, Shield } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 export const HomePage = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -39,6 +39,15 @@ export const HomePage = () => {
             </Button>
           </Box>
         )}
+        {user && token && (
+          <Box mt={3} p={2} bgcolor="#f5f5f5" borderRadius={1} display="flex" alignItems="center" justifyContent="center" gap={1}>
+            <Shield size={16} color="#4caf50" />
+            <Typography variant="caption" color="text.secondary">
+              JWT токен активен
+            </Typography>
+          </Box>
+        )}
+
         <Button
           variant="outlined"
           startIcon={<Loader2 size={20} />}
