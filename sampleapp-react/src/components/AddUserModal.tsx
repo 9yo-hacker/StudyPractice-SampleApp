@@ -9,7 +9,7 @@ const isDuplicateLoginError = (msg: string) => {
   const lower = msg.toLowerCase();
   return lower.includes('duplicate') || lower.includes('unique') ||
          lower.includes('23505') || lower.includes('already exists') ||
-         lower.includes('уже существует');
+         lower.includes('уже существует') || lower.includes('database error');
 };
 
 type AddUserModalProps = {

@@ -48,7 +48,8 @@ class ErrorService {
           const raw: string = data.message || '';
           const lower = raw.toLowerCase();
           if (lower.includes('duplicate') || lower.includes('unique') ||
-              lower.includes('23505') || lower.includes('already exists')) {
+              lower.includes('23505') || lower.includes('already exists') ||
+              lower.includes('database error')) {
             errorResponse.message = 'Пользователь с таким логином уже существует';
           } else {
             errorResponse.message = raw || 'Внутренняя ошибка сервера';
