@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { GlobalLoader } from './components/GlobalLoader';
-import { ProtectedRoute } from './components/ProtectedRoute';
+import { AuthGuard } from './components/guards/AuthGuard';
 import { Header } from './components/Header';
 import { HomePage } from './pages/HomePage';
 import { UsersPage } from './pages/UsersPage';
@@ -13,6 +13,8 @@ import { ProfilePage } from './pages/ProfilePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { LoadingDemoPage } from './pages/LoadingDemoPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { ServerErrorPage } from './pages/ServerErrorPage';
 import { setLoadingCallback } from './api/client';
 import { useLoading } from './contexts/LoadingContext';
 
@@ -24,11 +26,9 @@ const theme = createTheme({
 
 const LoadingBridge = () => {
   const { setLoading } = useLoading();
-
   useEffect(() => {
     setLoadingCallback(setLoading);
   }, [setLoading]);
-
   return null;
 };
 
@@ -49,15 +49,19 @@ function App() {
               <Route path="/loading-demo" element={<LoadingDemoPage />} />
 
               <Route path="/users" element={
-                <ProtectedRoute>
+                <AuthGuard>
                   <UsersPage />
-                </ProtectedRoute>
+                </AuthGuard>
               } />
               <Route path="/profile/:id" element={
-                <ProtectedRoute>
+                <AuthGuard>
                   <ProfilePage />
-                </ProtectedRoute>
+                </AuthGuard>
               } />
+
+              <Route path="/404" element={<NotFoundPage />} />
+              <Route path="/500" element={<ServerErrorPage />} />
+              <Route path="*" element={<Navigate to="/404" replace />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>

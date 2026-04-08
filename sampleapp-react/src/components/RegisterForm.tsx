@@ -16,7 +16,7 @@ type FormData = {
   name: string;
 };
 
-export const RegisterForm = ({ onSuccess }: { onSuccess?: () => void }) => {
+export const RegisterForm = ({ onSuccess, onDirtyChange }: { onSuccess?: () => void; onDirtyChange?: (dirty: boolean) => void }) => {
   const { register: registerUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState('');
@@ -32,6 +32,10 @@ export const RegisterForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const loginValue = watch('login');
   const passwordValue = watch('password');
   const debouncedLogin = useDebounce(loginValue, 500);
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   useEffect(() => {
     if (loginValue !== 'admin') clearErrors('login');
