@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { errorService } from '../services/error.service';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5071/api/v1';
 
@@ -31,6 +32,7 @@ const getToken = () => {
 export const apiClient = axios.create({
   baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
+  timeout: 10000,
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -57,9 +59,15 @@ apiClient.interceptors.response.use(
     activeRequests--;
     updateLoadingState();
 
+    errorService.handleError(error);
+
     if (error.response?.status === 401) {
-      localStorage.removeItem('user');
-      window.dispatchEvent(new Event('storage'));
+      const isAuthRequest = error.config?.url?.includes('/Users/Login');
+      if (!isAuthRequest) {
+        localStorage.removeItem('user');
+        window.dispatchEvent(new Event('storage'));
+        window.location.href = '/login?session=expired';
+      }
     }
 
     return Promise.reject(error);

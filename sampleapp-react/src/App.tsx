@@ -5,6 +5,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
 import { LoadingProvider } from './contexts/LoadingContext';
 import { GlobalLoader } from './components/GlobalLoader';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { ErrorAlert } from './components/ErrorAlert';
 import { AuthGuard } from './components/guards/AuthGuard';
 import { Header } from './components/Header';
 import { HomePage } from './pages/HomePage';
@@ -14,6 +16,7 @@ import { EditProfilePage } from './pages/EditProfilePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { LoadingDemoPage } from './pages/LoadingDemoPage';
+import { ErrorDemoPage } from './pages/ErrorDemoPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ServerErrorPage } from './pages/ServerErrorPage';
 import { UsersServerPage } from './pages/UsersServerPage';
@@ -40,15 +43,18 @@ function App() {
       <CssBaseline />
       <LoadingProvider>
         <AuthProvider>
+          <ErrorBoundary>
           <BrowserRouter>
             <LoadingBridge />
             <GlobalLoader message="Загрузка..." />
+            <ErrorAlert />
             <Header />
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/loading-demo" element={<LoadingDemoPage />} />
+              <Route path="/error-demo" element={<ErrorDemoPage />} />
 
               <Route path="/users" element={
                 <AuthGuard>
@@ -78,6 +84,7 @@ function App() {
               <Route path="*" element={<Navigate to="/404" replace />} />
             </Routes>
           </BrowserRouter>
+          </ErrorBoundary>
         </AuthProvider>
       </LoadingProvider>
     </ThemeProvider>
