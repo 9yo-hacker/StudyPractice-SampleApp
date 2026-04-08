@@ -1,17 +1,21 @@
 import {
   Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Paper, Typography, IconButton, Tooltip, Avatar, Box,
+  TableRow, Paper, Typography, IconButton, Tooltip, Avatar, Box, Chip,
 } from '@mui/material';
 import { Eye, Edit2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../types';
 import { useAuth } from '../contexts/AuthContext';
+import { SortableTableHeader } from './SortableTableHeader';
+import { SortConfig } from '../hooks/useSort';
 
-type Props = {
+type UsersTableProps = {
   users: User[];
+  sortConfig: SortConfig<User>;
+  onSort: (field: keyof User) => void;
 };
 
-export const UsersTable = ({ users }: Props) => {
+export const UsersTable = ({ users, sortConfig, onSort }: UsersTableProps) => {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
@@ -24,14 +28,27 @@ export const UsersTable = ({ users }: Props) => {
   }
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} variant="outlined">
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Пользователь</TableCell>
-            <TableCell>ID</TableCell>
-            <TableCell>Логин</TableCell>
-            <TableCell align="center">Действия</TableCell>
+            <SortableTableHeader<User>
+              field="id"
+              label="ID"
+              currentSort={sortConfig.key}
+              direction={sortConfig.direction}
+              onSort={onSort}
+              width={80}
+            />
+            <SortableTableHeader<User>
+              field="login"
+              label="Логин"
+              currentSort={sortConfig.key}
+              direction={sortConfig.direction}
+              onSort={onSort}
+            />
+            <TableCell align="center" width={120}>Действия</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -47,12 +64,15 @@ export const UsersTable = ({ users }: Props) => {
                   >
                     {user.login.charAt(0).toUpperCase()}
                   </Avatar>
-                  <Typography>
-                    {user.name || user.login}
-                    {currentUser?.id === user.id && (
-                      <Typography component="span" color="primary" sx={{ ml: 1 }}>(это вы)</Typography>
+                  <Box>
+                    <Typography variant="body1">{user.name || user.login}</Typography>
+                    {user.name && (
+                      <Typography variant="caption" color="text.secondary">@{user.login}</Typography>
                     )}
-                  </Typography>
+                  </Box>
+                  {currentUser?.id === user.id && (
+                    <Chip label="Это вы" size="small" color="primary" variant="outlined" />
+                  )}
                 </Box>
               </TableCell>
               <TableCell>{user.id}</TableCell>
