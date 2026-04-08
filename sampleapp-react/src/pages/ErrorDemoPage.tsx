@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { ErrorResponse } from '../services/error.service';
 import {
   Container, Paper, Typography, Box, Button,
   TextField, Grid, Card, CardContent, Alert, Divider, Chip,
@@ -10,6 +11,16 @@ import { errorService } from '../services/error.service';
 export const ErrorDemoPage = () => {
   const [userId, setUserId] = useState('999999');
   const [loading, setLoading] = useState<string | null>(null);
+  const [lastError, setLastError] = useState<ErrorResponse | null>(null);
+  const [errorCount, setErrorCount] = useState(0);
+
+  useEffect(() => {
+    const unsubscribe = errorService.subscribe((err) => {
+      setLastError(err);
+      setErrorCount(errorService.getErrorCount());
+    });
+    return unsubscribe;
+  }, []);
 
   const trigger404 = async () => {
     setLoading('404');
@@ -155,10 +166,10 @@ export const ErrorDemoPage = () => {
         <Box>
           <Typography variant="h6" gutterBottom>Статистика ошибок</Typography>
           <Box display="flex" gap={2} flexWrap="wrap">
-            <Chip label={`Всего ошибок: ${errorService.getErrorCount()}`} color="primary" />
-            {errorService.getLastError() && (
+            <Chip label={`Всего ошибок: ${errorCount}`} color="primary" />
+            {lastError && (
               <Chip
-                label={`Последняя: ${errorService.getLastError()?.status} - ${errorService.getLastError()?.message.substring(0, 30)}...`}
+                label={`Последняя: ${lastError.status} - ${lastError.message.substring(0, 30)}...`}
                 variant="outlined"
               />
             )}
