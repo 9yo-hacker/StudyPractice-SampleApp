@@ -10,6 +10,7 @@ import { Header } from './components/Header';
 import { HomePage } from './pages/HomePage';
 import { UsersPage } from './pages/UsersPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { EditProfilePage } from './pages/EditProfilePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { LoadingDemoPage } from './pages/LoadingDemoPage';
@@ -56,6 +57,12 @@ function App() {
               <Route path="/profile/:id" element={
                 <AuthGuard>
                   <ProfilePage />
+                </AuthGuard>
+              } />
+
+              <Route path="/profile/:id/edit" element={
+                <AuthGuard>
+                  <EditProfilePage />
                 </AuthGuard>
               } />
 
