@@ -42,3 +42,8 @@ export const deleteUser = async (id: number) => {
   const response = await apiClient.delete(`/Users/${id}`);
   return response.data;
 };
+
+export const seedUsers = async (): Promise<User[]> => {
+  const response = await apiClient.post<User[]>('/Users/seed');
+  return response.data;
+};
