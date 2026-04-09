@@ -182,7 +182,8 @@ public class UsersController(IUserRepository _repo, ITokenService _tokenService,
 
         var logins = faker.Generate(100)
             .Where(u => u.Login.Length >= 2 && u.Login.Length <= 50)
-            .DistinctBy(u => u.Login);
+            .DistinctBy(u => u.Login)
+            .Take(50);
 
         var users = new List<User>();
         foreach (var dto in logins)
