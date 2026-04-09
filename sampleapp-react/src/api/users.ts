@@ -34,7 +34,7 @@ export const createUser = async (user: Partial<User>) => {
 
 export const updateUser = async (id: number, user: Partial<User>) => {
   await delay(1200);
-  const response = await apiClient.put(`/Users/${id}`, user);
+  const response = await apiClient.put('/Users', { id, ...user }, { skipGlobalError: true } as object);
   return response.data;
 };
 
