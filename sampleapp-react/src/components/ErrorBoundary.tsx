@@ -75,7 +75,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   {this.state.expanded ? 'Скрыть детали' : 'Показать детали'}
                 </Button>
                 <Collapse in={this.state.expanded}>
-                  <Paper variant="outlined" sx={{ mt: 2, p: 2, bgcolor: '#f5f5f5', textAlign: 'left', overflow: 'auto', maxHeight: 300 }}>
+                  <Paper variant="outlined" sx={{ mt: 2, p: 2, bgcolor: 'action.hover', textAlign: 'left', overflow: 'auto', maxHeight: 300 }}>
                     <Typography variant="caption" component="pre" sx={{ fontFamily: 'monospace' }}>
                       {this.state.error?.stack}
                       {'\n\n'}

@@ -12,7 +12,7 @@ export const FormDebug = ({ values, errors, touched, isValid, isDirty }: FormDeb
   if (import.meta.env.PROD) return null;
 
   return (
-    <Paper variant="outlined" sx={{ p: 2, mt: 3, bgcolor: '#f5f5f5' }}>
+    <Paper variant="outlined" sx={{ p: 2, mt: 3, bgcolor: 'action.hover' }}>
       <Typography variant="subtitle2" gutterBottom>
         Отладка формы
       </Typography>

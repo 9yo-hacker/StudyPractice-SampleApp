@@ -104,7 +104,7 @@ export const LoadingDemoPage = () => {
             )}
           </Paper>
 
-          <Paper variant="outlined" sx={{ p: 3, bgcolor: '#f5f5f5' }}>
+          <Paper variant="outlined" sx={{ p: 3, bgcolor: 'action.hover' }}>
             <Box display="flex" gap={2}>
               <Info size={20} color="#666" />
               <Typography variant="body2" color="text.secondary">

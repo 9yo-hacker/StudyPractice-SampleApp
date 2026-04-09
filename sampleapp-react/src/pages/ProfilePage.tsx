@@ -157,7 +157,7 @@ export const ProfilePage = () => {
                   <Shield size={20} color="#4caf50" />
                   <Typography variant="h6">Ваш JWT токен</Typography>
                 </Box>
-                <Paper variant="outlined" sx={{ p: 2, bgcolor: '#f5f5f5', fontFamily: 'monospace', fontSize: '0.75rem', wordBreak: 'break-all' }}>
+                <Paper variant="outlined" sx={{ p: 2, bgcolor: 'action.hover', fontFamily: 'monospace', fontSize: '0.75rem', wordBreak: 'break-all' }}>
                   {currentUser.token}
                 </Paper>
                 <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
