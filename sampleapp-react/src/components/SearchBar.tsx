@@ -21,6 +21,7 @@ export const SearchBar = ({
     value={value}
     onChange={(e) => onChange(e.target.value)}
     disabled={disabled}
+    autoComplete="off"
     slotProps={{
       input: {
         startAdornment: (
