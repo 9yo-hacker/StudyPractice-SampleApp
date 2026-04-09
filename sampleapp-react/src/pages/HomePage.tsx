@@ -1,5 +1,5 @@
 import { Container, Typography, Box, Paper, Avatar, Button } from '@mui/material';
-import { Home, Users, Sparkles, LogIn, UserPlus, Loader2, Shield, Server, Bug } from 'lucide-react';
+import { Home, Users, Sparkles, LogIn, UserPlus, Loader2, Shield, Server, Bug, Palette } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -70,6 +70,13 @@ export const HomePage = () => {
             onClick={() => navigate('/error-demo')}
           >
             Демо ошибок
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<Palette size={20} />}
+            onClick={() => navigate('/theme-settings')}
+          >
+            Настройки темы
           </Button>
         </Box>
       </Paper>
