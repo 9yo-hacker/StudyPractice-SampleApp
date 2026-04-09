@@ -127,7 +127,7 @@ export const UsersPage = () => {
         )}
 
         {token && (
-          <Box mt={2} p={2} bgcolor="#f5f5f5" borderRadius={1}>
+          <Box mt={2} p={2} bgcolor="action.hover" borderRadius={1}>
             <Typography variant="caption" color="text.secondary">
               JWT токен активен • Запросы авторизованы
             </Typography>

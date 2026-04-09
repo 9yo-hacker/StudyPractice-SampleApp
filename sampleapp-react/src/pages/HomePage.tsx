@@ -57,7 +57,7 @@ export const HomePage = () => {
           </Box>
         )}
         {user && token && (
-          <Box mt={3} p={2} bgcolor="#f5f5f5" borderRadius={1} display="flex" alignItems="center" justifyContent="center" gap={1}>
+          <Box mt={3} p={2} bgcolor="action.hover" borderRadius={1} display="flex" alignItems="center" justifyContent="center" gap={1}>
             <Shield size={16} color="#4caf50" />
             <Typography variant="caption" color="text.secondary">
               JWT токен активен
