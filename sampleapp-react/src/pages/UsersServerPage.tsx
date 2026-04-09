@@ -123,6 +123,8 @@ export const UsersServerPage = () => {
           sortConfig={{ key: null, direction: 'asc' }}
           onSort={() => {}}
           onDelete={setUserToDelete}
+          loading={isLoading}
+          pageSize={pageSize}
         />
         {filteredData.length === 0 && !isLoading && !error && (
           <Alert severity="info" sx={{ mt: 2 }}>
@@ -131,8 +133,7 @@ export const UsersServerPage = () => {
         )}
       </Paper>
 
-      {totalCount > 0 && (
-        <ServerPaginationControls
+      <ServerPaginationControls
           pageNumber={pageNumber}
           totalPages={totalPages}
           pageSize={pageSize}
@@ -146,10 +147,9 @@ export const UsersServerPage = () => {
           hasNextPage={hasNextPage}
           hasPrevPage={hasPrevPage}
         />
-      )}
 
       {token && (
-        <Box mt={2} p={2} bgcolor="#f5f5f5" borderRadius={1}>
+        <Box mt={2} p={2} bgcolor="action.hover" borderRadius={1}>
           <Typography variant="caption" color="text.secondary">
             JWT токен активен • Серверная пагинация
           </Typography>

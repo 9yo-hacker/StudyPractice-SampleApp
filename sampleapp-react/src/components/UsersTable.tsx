@@ -1,6 +1,6 @@
 import {
   Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Paper, Typography, IconButton, Tooltip, Avatar, Box, Chip,
+  TableRow, Paper, Typography, IconButton, Tooltip, Avatar, Box, Chip, Skeleton,
 } from '@mui/material';
 import { Eye, Edit2, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -14,19 +14,13 @@ type UsersTableProps = {
   sortConfig: SortConfig<User>;
   onSort: (field: keyof User) => void;
   onDelete?: (user: User) => void;
+  loading?: boolean;
+  pageSize?: number;
 };
 
-export const UsersTable = ({ users, sortConfig, onSort, onDelete }: UsersTableProps) => {
+export const UsersTable = ({ users, sortConfig, onSort, onDelete, loading = false, pageSize = 5 }: UsersTableProps) => {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
-
-  if (users.length === 0) {
-    return (
-      <Typography color="text.secondary" align="center" py={4}>
-        Нет пользователей
-      </Typography>
-    );
-  }
 
   return (
     <TableContainer component={Paper} variant="outlined">
@@ -53,7 +47,27 @@ export const UsersTable = ({ users, sortConfig, onSort, onDelete }: UsersTablePr
           </TableRow>
         </TableHead>
         <TableBody>
-          {users.map((user) => (
+          {loading && Array.from({ length: pageSize }).map((_, i) => (
+            <TableRow key={`skeleton-${i}`}>
+              <TableCell>
+                <Box display="flex" alignItems="center" gap={2}>
+                  <Skeleton variant="circular" width={32} height={32} />
+                  <Skeleton variant="text" width={120} />
+                </Box>
+              </TableCell>
+              <TableCell><Skeleton variant="text" width={30} /></TableCell>
+              <TableCell><Skeleton variant="text" width={80} /></TableCell>
+              <TableCell align="center"><Skeleton variant="text" width={60} sx={{ mx: 'auto' }} /></TableCell>
+            </TableRow>
+          ))}
+          {!loading && users.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
+                <Typography color="text.secondary">Нет пользователей</Typography>
+              </TableCell>
+            </TableRow>
+          )}
+          {!loading && users.map((user) => (
             <TableRow key={user.id} hover>
               <TableCell>
                 <Box display="flex" alignItems="center" gap={2}>
