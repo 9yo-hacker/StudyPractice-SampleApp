@@ -59,7 +59,9 @@ apiClient.interceptors.response.use(
     activeRequests--;
     updateLoadingState();
 
-    errorService.handleError(error);
+    if (!error.config?.skipGlobalError) {
+      errorService.handleError(error);
+    }
 
     if (error.response?.status === 401) {
       const isAuthRequest = error.config?.url?.includes('/Users/Login');
