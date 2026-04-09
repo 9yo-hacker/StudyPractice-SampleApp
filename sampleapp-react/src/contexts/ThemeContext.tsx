@@ -112,15 +112,14 @@ type ThemeProviderProps = {
 };
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  const [mode, setMode] = useState<ThemeMode>('system');
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
+  const [mode, setMode] = useState<ThemeMode>(() => {
     const savedMode = localStorage.getItem('themeMode') as ThemeMode | null;
     if (savedMode && ['light', 'dark', 'system'].includes(savedMode)) {
-      setMode(savedMode);
+      return savedMode;
     }
-  }, []);
+    return 'system';
+  });
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('themeMode', mode);
