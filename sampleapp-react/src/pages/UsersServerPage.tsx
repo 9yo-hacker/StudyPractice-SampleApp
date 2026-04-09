@@ -14,18 +14,16 @@ import { ConfirmDialog } from '../components/guards/ConfirmDialog';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { deleteUser, createUser } from '../api/users';
 import { User } from '../types';
-import { useLoading } from '../contexts/LoadingContext';
 
 export const UsersServerPage = () => {
   const { token } = useAuth();
-  const { isLoading } = useLoading();
   const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState<User[]>([]);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   const {
-    data, totalCount, totalPages, error,
+    data, totalCount, totalPages, error, isLoading,
     pageNumber, pageSize,
     goToPage, changePageSize, refresh,
     hasNextPage, hasPrevPage, from, to,
@@ -117,7 +115,7 @@ export const UsersServerPage = () => {
 
       {error && <ErrorMessage message={error} onRetry={refresh} />}
 
-      <Paper sx={{ p: 2 }}>
+      <Paper sx={{ p: 2, minHeight: pageSize * 53 + 56 }}>
         <UsersTable
           users={filteredData}
           sortConfig={{ key: null, direction: 'asc' }}

@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { getUsersPaginated } from '../api/users';
 import { User, PaginatedResponse } from '../types';
-import { useLoading } from '../contexts/LoadingContext';
 
 type UseServerPaginationProps = {
   initialPageSize?: number;
@@ -20,14 +19,13 @@ export const useServerPagination = ({
   const [pageNumber, setPageNumber] = useState(initialPageNumber);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [error, setError] = useState<string | null>(null);
-  const { withLoading } = useLoading();
+  const [isLoading, setIsLoading] = useState(false);
 
   const loadPage = useCallback(async () => {
     try {
+      setIsLoading(true);
       setError(null);
-      const response = await withLoading(
-        getUsersPaginated({ pageNumber, pageSize })
-      ) as PaginatedResponse<User>;
+      const response = await getUsersPaginated({ pageNumber, pageSize }) as PaginatedResponse<User>;
       setData(response.data);
       setTotalCount(response.count);
       setTotalPages(response.totalPages);
@@ -36,8 +34,10 @@ export const useServerPagination = ({
       setError('Не удалось загрузить пользователей');
       console.error(err);
       throw err;
+    } finally {
+      setIsLoading(false);
     }
-  }, [pageNumber, pageSize, withLoading]);
+  }, [pageNumber, pageSize]);
 
   useEffect(() => {
     if (autoLoad) {
@@ -69,6 +69,7 @@ export const useServerPagination = ({
     totalCount,
     totalPages,
     error,
+    isLoading,
     pageNumber,
     pageSize,
     loadPage,
