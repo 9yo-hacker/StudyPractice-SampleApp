@@ -49,9 +49,12 @@ public class ExceptionHandlerMiddleware
                 if (dbUpdateEx.InnerException is Npgsql.PostgresException pgEx)
                 {
                     httpStatusCode = HttpStatusCode.BadRequest;
-                    message = "Database error occurred";
-                    if (pgEx.SqlState == "23503")
-                        message = "Foreign key constraint violation. The referenced record does not exist.";
+                    message = pgEx.SqlState switch
+                    {
+                        "23505" => "Пользователь с таким логином уже существует",
+                        "23503" => "Foreign key constraint violation. The referenced record does not exist.",
+                        _ => "Database error occurred"
+                    };
                     detail = pgEx.Message;
                     break;
                 }

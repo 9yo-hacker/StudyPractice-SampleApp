@@ -75,7 +75,11 @@ export const RegisterForm = ({ onSuccess, onDirtyChange }: { onSuccess?: () => v
         setServerError('Проверьте правильность заполнения полей');
       } else {
         const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-        setServerError(msg || 'Ошибка регистрации');
+        if (msg?.toLowerCase().includes('логин') || msg?.toLowerCase().includes('login') || msg?.toLowerCase().includes('уже существует')) {
+          setError('login', { type: 'manual', message: msg });
+        } else {
+          setServerError(msg || 'Ошибка регистрации');
+        }
       }
     } finally {
       setLoading(false);
