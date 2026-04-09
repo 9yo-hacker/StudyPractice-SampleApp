@@ -84,7 +84,7 @@ export const AddUserModal = ({ open, onClose, onSave }: AddUserModalProps) => {
       </DialogTitle>
 
       <DialogContent dividers>
-        <Box display="flex" flexDirection="column" gap={2} sx={{ mt: 1 }}>
+        <Box component="form" autoComplete="off" display="flex" flexDirection="column" gap={2} sx={{ mt: 1 }}>
           {serverError && <Alert severity="error" onClose={() => setServerError('')}>{serverError}</Alert>}
 
           <TextField
@@ -96,6 +96,7 @@ export const AddUserModal = ({ open, onClose, onSave }: AddUserModalProps) => {
             helperText={errors.name}
             disabled={loading}
             required
+            slotProps={{ htmlInput: { autoComplete: 'new-password' } }}
           />
 
           <TextField
@@ -107,6 +108,7 @@ export const AddUserModal = ({ open, onClose, onSave }: AddUserModalProps) => {
             helperText={errors.login || 'Должен начинаться с заглавной буквы'}
             disabled={loading}
             required
+            slotProps={{ htmlInput: { autoComplete: 'new-password' } }}
           />
 
           <TextField
@@ -120,6 +122,7 @@ export const AddUserModal = ({ open, onClose, onSave }: AddUserModalProps) => {
             disabled={loading}
             required
             slotProps={{
+              htmlInput: { autoComplete: 'new-password' },
               input: {
                 endAdornment: (
                   <InputAdornment position="end">
